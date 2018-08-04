@@ -34,6 +34,6 @@ Getting Started
 
 You likely just want the files from this repository without any git history so that you can start from a fresh state. Here's one quick way to get these files into a directory:
 
-    curl https://rawgit.com/jncraton/project-template/master/new.sh | bash
+    curl -L https://rawgit.com/jncraton/project-template/master/new.sh | bash
 
 You can also download, read, and execute the included `new.sh` script if you prefer not to pipe curl to bash.
