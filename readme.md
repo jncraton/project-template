@@ -27,4 +27,5 @@ You likely just want the files from this repository without any git history so t
     git clone --depth 1 https://github.com/jncraton/project-template.git
     mv project-template/* .
     rm -rf project-template
-    
+
+These commands are also available to be executed directly in the included `new.sh` script.
