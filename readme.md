@@ -14,6 +14,14 @@ The following output files can be generated using the makefile (e.g. `make index
 - `index.pdf` for PDF output (requires xelatex)
 - `index.odt` for Open Document Text output
 
+Viewing current output
+----------------------
+
+A few shortcut tasks are available to quickly view the current output:
+
+- `make show` - Build and display the current HTML output in Firefox
+- `make showpdf` - Build and display the current PDF output in Firefox
+
 Testing
 -------
 
