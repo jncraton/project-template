@@ -18,3 +18,13 @@ Testing
 All Python code can be pulled from the document and executed using `doctest` by calling `make test`.
 
 Additional files are provided to allow a project to be easily tested on TravisCI and deployed using Netlify.
+
+Getting Started
+---------------
+
+You likely just want the files from this repository without any git history so that you can start from a fresh state. Here's one quick way to get these files into a directory:
+
+    git clone --depth 1 https://github.com/jncraton/project-template.git
+    mv project-template/* .
+    rm -rf project-template
+    
