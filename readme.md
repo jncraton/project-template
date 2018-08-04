@@ -1,6 +1,8 @@
 Project Template
 ================
 
+[![Build Status](https://travis-ci.org/jncraton/project-template.svg?branch=master)](https://travis-ci.org/jncraton/project-template)
+
 A template for computer science projects.
 
 This is a set of files to easily get started on a new CS project. Python code and text is placed in the file `index.pmd` and weaved using Pweave and the included makefile. 
