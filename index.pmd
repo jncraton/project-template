@@ -1,0 +1,640 @@
+% Programming Language Draft Specification
+% Jon Craton
+% August 5th, 2018
+
+\newpage
+
+> Programming should be regarded as the art of telling another human being what one wants the computer to do.
+>
+> — Don Knuth [6]
+
+Guiding Principles
+==================
+
+Exactly One Correct Way
+-----------------------
+
+To ensure simplicity and readability, my first guiding principle is that the language should provide exactly one obviously correct way to perform a task. This will almost certainly make the language uncomfortable to actually use, but I thought it might be a fun exercise given that no one will actually be using this language anyhow.
+
+The language is opinionated about *how* it is written. The language has an embedded code formatter to bring code up to spec with very specific and required style guidelines.
+
+> I thought that it was a firm principle of language design — out of concern for programming as a human activity — that in all respects equivalent programs should have few possibilities for different representations (possibility for differences ideally not going beyond the arbitrary choice of identifiers and the arbitrary ordering of syntactically unordered components). Otherwise completely different styles of programming arise unnecessarily, thereby hampering maintainability, readability and what have you. This requires from the language designers the courage to make up their minds!
+>
+> — Edsger Dijkstra [7][8]
+
+\newpage
+
+Correct Code Should Look Correct
+--------------------------------
+
+> Programs must be written for people to read, and only incidentally for machines to execute.
+> 
+> — H. Abelson and G. Sussman[11]
+
+In order to reduce errors and improve readability, every effort was made to ensure that code that does something looks like it is doing that. Consider this classic example from C-like language. Here we have a for loop:
+
+    for (int i = 0; i<=10; i++)
+      i = i*i
+      print(i)
+      
+At first glance, this may look like it will print out the squares of numbers from 1 to 10. It will actually just print 100. The above in functionally the same as this:
+
+    for (int i = 0; i<=10; i++)
+      i = i*i
+
+    print(i)
+
+It should be written as:
+
+    for (int i = 0; i<=10; i++) {
+      i = i*i
+      print(i)
+    }
+
+These sorts of shenanigans would ideally not be part of a sound programming language. In order to eliminate these errors, white space is considered to be a significant and important part of the language syntax.
+
+> A common mistake people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.
+> 
+> — Douglas Adams[13]
+
+\newpage
+
+Prioritize Existing Notation
+----------------------------
+
+> That language is an instrument of human reason, and not merely a medium for the expression of thought, is a truth generally admitted.
+>
+> — George Boole[12]
+
+Where existing mathematical notation exists, it should be used in place of inventing notation or using notation from other programming languages. In this way, the language is somewhat like APL[18].
+
+Unicode is required and used in key parts of the language. If an existing Unicode character exists for some operation, it should be used in favor of traditional ASCII replacements.
+
+Details Optional
+----------------
+
+Boilerplate and extraneous syntax should be kept to an absolute minimum. Many aspects of the syntax are optional and should only be used when required to address ambiguities. An automatic code formatter is provided to remove extraneous syntax among other functions.
+
+\newpage
+
+Names, Scope, and Binding
+=========================
+
+Names
+-----
+
+Names may include any non-whitespace characters and must not start with a number. They may not include operators in their names. This is a standard choice present in most languages.
+
+There are no variable declarations. Variables are inferred to be local if they are assigned in a function. This prevents boilerplate declarations and generally requires fewer lines of code to perform a task. This is the same method used in Python. [22]
+
+Scope
+-----
+
+The language uses static scoping. There are no C-like blocks, so functions are used to create a new scope. Function local variable scope is handled lexically, so nested functions have access to their parent's scope, but other called functions do not.[10]
+
+This choice allows functions to be the core unit of the language. There are no blocks outside of functions. Functions are the unit of scope.
+
+Static scoping aligns with my goal to make code look the same as it functions as much as possible. The rationale for this decision is very similar for the rationale found in the Scheme documentation[20] relating scoping back to the actual text of the program:
+
+> With static scoping, you can tell what binding a variable reference refers to just from looking at the text of the program; the referenced binding cannot depend on how the program is used. That is, the nesting of environments (their parent-child relationship) corresponds to the nesting of binding expressions in program text. (Because of this connection to the text of the program, static scoping is also called lexical scoping.) For each place where a variable is bound in a program there is a corresponding region of the program text within which the binding is effective.
+
+Static typing also allows for compile time validation of static types.
+
+Binding
+-------
+
+Binding is done by the following:
+
+    my_var ≡ 1
+
+Binding is the only statement in the language. It literally maps one expression to another such that they can now be used interchangeably.
+
+Binding may also be accomplished using match syntax:
+
+    _ my_fun _ ≡ left right → 
+      function body
+
+This can be used to define new infix functions such as operators:
+
+    _ · _ ≡ a b →
+      a × b
+
+The language uses static binding. As discussed in the scoping section, this helps the code to be more readable and makes it easier to write code that executes in the way that it looks like it will. This also makes the language more approachable as this is a common approach in other popular languages (C, Java, Scheme, etc).[21]
+
+\newpage
+
+Types
+=====
+
+This language is strongly and statically typed. The language contains no variable or type declarations. All types are automatically inferred at compile time. This would likely be implemented using a system such as Hindley-Milner[1] as in Haskell.
+
+Literals
+--------
+
+The following literals are provided:
+
+- Grapheme - A single Unicode grapheme.
+  - e.g. 'a' or '→'
+- Boolean - A boolean value. May be either True or False.
+- Number - A scalable number supporting unlimited integer size, prefect decimal precision up to 3 points after the decimal, and precision no worse than an IEEE 64-bit float for all operations. This allows the number type to be well suited to nearly all numeric operations including scientific tasks, cryptographic operations, and handling fractional money without loss of precision. 
+  - e.g. 1.0 or 1 or 1e300
+  - Numbers may also be postfixed with a string indicating a secondary type. These types are automatically handled by operations on the numbers. For example `2m * 2m` would result in `4m²`. 
+
+\newpage
+
+Functions
+---------
+
+Functions should be seen as the core construct of the language. There is exactly one way to define a function. Note that the following is an expression, and not a statement. It returns a function:
+
+    params →
+      function body
+
+To bind a function to a variable, one would do the following:
+
+    my_fn ≡ params →
+      function body
+
+Functions may be bound to other objects. When they are called in this way, the first parameter of the function is the object that they are bound to.
+
+    my_obj.func ≡ self →
+      function body with self mapped to my_obj
+    
+    my_obj.func()
+
+Functions automatically return their final expression.
+
+\newpage
+
+Lists
+-----
+
+>  Any sufficiently complicated C or Fortran program contains an ad-hoc, informally-specified bug-ridden slow implementation of half of Common Lisp.
+>
+> — Philip Greenspun [4]
+
+Lists are ordered groups of items of the same type. They do not have a fixed length, and may be infinite.
+
+The following expression returns a list of strings:
+
+    <indent>
+    "item1"
+    "item2"
+    …
+
+This can be bound to a variable as:
+
+    my_list ≡ 
+      "item1"
+      "item2"
+      …
+
+Lists can be used as sets where duplicate members are ignored by using set-based union and intersection operations:
+
+    fruits1 ≡
+      apple
+      pear
+      …
+    
+    fruits2 ≡ 
+      apple
+      peach
+      …
+    
+    fruits = fruits1 ∪ fruits2
+    
+    # fruits is now {apple,pear,peach}
+
+\newpage
+
+Tuples
+------
+
+Tuples are a data type of fixed size composed of other data types. The following would be a tuple of length 3:
+
+    <indent>
+    1
+    "two"
+    3
+
+Here's how a tuple may be bound to a variable:
+
+    my_tuple ≡
+        1
+        "two"
+        3
+
+Tuple construction is differentiated from list construction by the lack of ellipses and the fact that tuple members may have different types.
+
+Note that where tuple elements can fit on a single 73 character line, they should be defined as:
+
+    my_tuple ≡ 1 "two" 3
+
+This syntax makes it much cleaner to define composite types such as matrices and objects.
+
+\newpage
+
+Objects
+-------
+
+Objects are simply lists whose members are key/value tuples. When a list is made up of tuples where the first item is hashable, the list is considered to be an object. The following expression returns an "object":
+
+    <indent>
+    item1 1
+    item2 2
+
+This expression may be bound to a variable as:
+
+    my_obj ≡ 
+      item1 1
+      item2 2
+
+Items may be accessed by element as with a list:
+
+    my_obj[0] # ("item1", 2)
+
+They can also be access by key using common dot notation:
+
+    my_obj.item1 # 2
+
+Note that the key following the dot is a string, not an identifier, so it may need to be quoted as seen here:
+
+    my_obj ≡ 
+      item1 1
+      item-2 2
+  
+    my_obj.item-2 # Fails
+    my_obj."item-2" # Works
+
+\newpage
+
+Strings
+-------
+
+Special syntax is provided for creating lists of graphemes:
+
+    "A string"
+
+Is precisely the same as:
+
+    <indent>
+    'A'
+    ' '
+    'S'
+    't'
+    'r'
+    'i'
+    'n'
+    'g'
+
+String notation should always be preferred for lists of graphemes. In many cases, quotes can be left off and strings will still be discovered correctly.
+
+Strings may be composed with expressions by using single quotes:
+
+    name ≡ "Jon"
+
+    greeting ≡ "Hello, my name is 'name'."
+
+    # Greeting is "Hello, my name is Jon."
+
+\newpage
+
+Vectors
+-------
+
+A vector may be thought of either as a fixed length list or a tuple whose elements all have the same type. In terms of the type system, a vector can be used in all of the same ways as a list, with the exception of adding and removing elements. It is constructed exactly as a tuple and identified using duck typing. Here's an example vector:
+
+    <indent>
+    1
+    2
+    3
+
+And with binding:
+
+    my_vec ≡
+      1
+      2
+      3
+
+Matrices
+--------
+
+An N×M matrix is simply an N-tuple of M-tuples. Here is an example identity matrix:
+
+    <indent>
+    1 0 0 0
+    0 1 0 0
+    0 0 1 0
+    0 0 0 1
+
+In context with a binding:
+
+    my_mat ≡
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+
+Notice that Objects, Vectors, and Matrices are types derived from tuples and lists, so they inherit the same operations. For example, the first row of the above matrix is just the first item in the tuple.
+
+\newpage
+
+Control Flow
+============
+
+> We were after the C++ programmers. We managed to drag a lot of them about halfway to Lisp. 
+> 
+> — Guy Steele, co-author of the Java spec [5] 
+
+Control flow in this languages focuses on functions and higher-order functions to call them. It also emphasizes that all control structures are expressions rather than statements so that they can be used as values.
+
+\newpage
+
+Matching
+--------
+
+The language could provide a fairly standard if-then-else expression as:
+
+    result ≡ if x
+      10
+    else
+      20
+
+However, because brackets are freed up from their traditional ALGOL usage for blocks, they can be repurposed to their more standard mathematical matching notation i.e.:
+
+$f(x) = \left\{
+   \begin{array}{rl}
+     a, & \text{if } p(x) \\
+     b, & \text{if } q(x)
+   \end{array}\right.$
+
+Here's how match syntax for the above `if` expression looks:
+
+    result ≡
+      {
+        10 if x
+        20
+      }
+
+This matching syntax replaces the need for traditional if-then structures. This is similar to how piecewise functions may be defined in Haskell, except that the function declaration is implicit, immediately called, and does not create a new scope.
+
+Because functions automatically return their final expression, a piecewise function can be defined as:
+
+    dirac_delta ≡ x →
+      {
+        1 if x = 0
+        0
+      }
+
+\newpage
+      
+Loops
+-----
+
+"Loops" are provided as:
+
+    list ↦ i →
+      function body
+
+This differs from a traditional `for` loop in that it is called `map` and that the language **makes no guarantee about execution order** of the supplied function. If a runtime finds that it is beneficial to paralellize the calls to the function, it is free to do so. This is similar to using `map` in Python's multiprocessing package:
+
+```python,evaluate=False
+from multiprocessing import Pool
+
+def f(x):
+    return x*x
+
+if __name__ == '__main__':
+    p = Pool(5)
+    print(p.map(f, [1, 2, 3]))
+```
+
+The map expression returns a list of all the return values from the function calls. This list will be in the same order as the original list despite not necessarily being executed in order.
+
+Here's one example of using these results:
+
+    squares ≡ [1…9] ↦ x →
+      x²
+
+    # squares is bound to [1,4,9,16,25,…]
+
+Summation
+---------
+
+Summation (reduce) is also provided:
+
+    sum_of_squares ≡ Σ [1…9] ↦ x →
+      x²
+
+    # sum_of_squares is 285
+
+Every
+-----
+
+Truthiness of some function over a list can also be found as:
+
+    all_under_10 ≡ ∀ [1…9] ↦ x →
+      x < 10
+
+    # all_under_10 is True
+
+Comparison
+----------
+
+Comparison is always done by value.
+
+Mathematical syntax is used whenever possible for comparison operators. For example:
+
+Comparison Operator| Name
+--------|----:   
+=|Is equal to
+≠|Is not equal to
+<|Less than
+>|Greater than
+≤|Less than or equal
+≥|Greater than or equal
+∧|Logical and
+∨|Logical or
+⊕|Logical xor
+¬|Logical negation
+∈|Is member of
+∉|Is not member of
+
+\newpage
+
+Features
+========
+
+Operations
+----------
+
+Operator| Name
+--------|----:
++|Add
+-|Subtract
+×|Multiply
+÷|Divide
+²|Square
+³|Cube
+√|Square root
+∪|Union
+∩|Intersection
+→|Function arrow
+Σ|Summation (reduce)
+↦|Map
+≡|Binding
+
+Derived Ranges
+--------------
+
+Consider iterating over the even integers between 1 and 100 in JavaScript:
+
+    for(i=2; i<=100; i+=2) {
+      \\ Do something with i
+    }
+
+Or doing the same thing in Python:
+
+    for i in range(2,100,2):
+      \\ Do something with i
+
+While a programmer gets very used to writing and reading these sorts of expressions, they are very far from how we would naturally express ideas to one another.
+
+We might like to be able to do something like this:
+
+    [2,4,…,100] \\ 2,4,6,8,10,…,100
+
+It's natural for us to grasp ideas by example, and a computer should be able to construct programs in the same way. These sorts of derived ranges are one practical example of how that can happen.
+
+Argument Validation
+-------------------
+
+The language does not provide enums, but it does provide a mechanism to get some of the value that enums provide. While all types are automatically inferred, it is possible to declare a function whose argument values must be members of a certain set in addition to being the correct type. The standard membership operator `∈` is used for this. In essence, this is an extension of the type system. When possible, arguments will be validated at compile time, but they may also require runtime handling in the case of dynamic data being used as part of the validation.
+
+Here's an example of a function that may accept one of exactly four strings:
+
+    directions ≡
+      North
+      South
+      East
+      West
+    
+    turn_right ≡ dir ∈ directions →
+      {
+        North if dir = West
+        South if dir = East
+        East if dir = North
+        West if dir = South
+      }
+
+Default Lists
+-------------
+
+Several infinite sets commonly used in mathematics are defined as lists by the language:
+
+Set|Full Name|Definition[23]
+--------|----:
+ℕ|Natural Numbers|[0,1,2,…]
+ℤ|Integers|{p, −p : p ∈ ℕ ∪ {0}}
+ℙ|Prime Numbers|The set of all prime numbers
+ℚ|Rational Numbers|{p/q : p ∈ ℤ, q ∈ ℕ}
+ℝ|Real Numbers|
+
+Default lists can be very useful combined with argument validation:
+
+    get_by_id ≡ id ∈ ℕ → # Confirms id is a natural number
+      query("select id,name from people where id='id'")
+
+\newpage
+
+Examples
+========
+
+Newtonian Physics
+-----------------
+
+Calculate new positions for a list of physical objects after some time step.
+
+    Δt ≡ 1    
+
+    next_state ≡ p →
+        pos p.pos + p.vel × Δt
+        vel p.vel + p.acc × Δt
+        acc p.acc
+
+    particles ≡ particles ↦ next_state
+
+Vector Magnitude
+----------------
+
+Calculates the magnitude (length) of a vector
+
+    v ≡ 
+      1 2 3
+
+    v.mag ≡ v →
+      √Σ v ↦ x →
+        x²
+
+\newpage
+  
+Fibonacci
+---------
+
+    fib ≡ n →
+      {
+        0 if n = 0
+        1 if n = 1
+        F(n-1) + F(n-1)
+      }
+
+That's one way to write it using match syntax, but the formatter would actually make it look somewhat better:
+
+    fib ≡ n →
+      {
+        F₀ = 0
+        F₁ = 1
+        F(n-1) + F(n-2)
+      }
+
+\newpage
+
+Summary
+=======
+
+I saw this project as an opportunity to combine distinctive attributes from many different languages. The language that ultimately emerged is the result of quite a bit of iterative development.
+
+The final language syntax ended up something like a hybrid of APL and Python. It leans on more function properties found in Lisp and Haskell. I've tried to ignore the practical challenges of implementing this language, but I think it would be incredibly difficult to parse and for that reason also very difficult to actually write code in.
+
+I wanted to explore the concept of trusting the compiler to be "smart". This seems like a good idea on the surface, but it ultimately creates a language with all of the ambiguity of English. At the gut level, I have appreciated some of the "intelligence" found in other languages that allow a programmer to leave out verbose syntax. One example of this would be optional semicolons in Javascript. It is nice to not need semicolons to terminate statements, but ultimately it creates some strange edge cases where statements are terminated in places the programmer did not expect. This is one of the reasons that Crockford and others recommend always using semicolons in JS even though they are not needed.[19]
+
+This language provided a great platform for me to explore language design, but it is not anything that I would want to use to write serious software. The ambiguity of the language and use of Unicode characters throughout would make it very challenging to write correct code in. Ultimately, this was a fantastic learning experience, but I think I still prefer using C/C++ or Rust.
+
+\newpage
+
+References
+==========
+
+1. https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system
+2. https://en.wikipedia.org/wiki/Set-builder_notation
+3. https://en.wikipedia.org/wiki/Gradual_typing
+4. http://philip.greenspun.com/research/
+5. http://www.paulgraham.com/icad.html
+6. Scott, Michael L. "Programming Language Pragmatics." (2009).
+7. http://www.cs.utexas.edu/~EWD/transcriptions/EWD06xx/EWD660.html
+8. https://softwareengineering.stackexchange.com/questions/148790/is-the-14th-line-of-the-zen-of-python-a-reference-to-dijkstra#148794
+9. https://en.wikipedia.org/wiki/Anonymous_function
+10. https://en.wikipedia.org/wiki/Scope_(computer_science)#Function_scope
+11. SICP
+12. https://en.wikiquote.org/wiki/Programming_languages
+13. Adams, Douglas. The Ultimate Hitchhiker's Guide to the Galaxy: Five Novels in One Outrageous Volume. Del Rey, 2010.
+14. Brooks Jr, Frederick P. "The mythical man-month (anniversary ed.)." (1995).
+15. https://en.wikiquote.org/wiki/Edsger_W._Dijkstra
+16. Dijkstra, Edsger. 1972 Turing Award Lecture[1], Communications of the ACM 15 (10), October 1972: pp. 859–866.
+17. https://en.wikibooks.org/wiki/Haskell/Pattern_matching
+18. https://en.wikipedia.org/wiki/APL
+19. Crockford, Douglas. JavaScript: The Good Parts: The Good Parts. " O'Reilly Media, Inc.", 2008.
+20. https://www.gnu.org/software/mit-scheme/documentation/mit-scheme-ref/Static-Scoping.html
+21. https://www.cs.oberlin.edu/~bob/cs275.spring14/Examples%20and%20Notes/February/Februrary%2028/Lexical%20and%20Dynamic%20Binding.pdf
+22. https://docs.python.org/3/faq/programming.html#what-are-the-rules-for-local-and-global-variables-in-python
+23. https://en.wikipedia.org/wiki/List_of_mathematical_symbols
