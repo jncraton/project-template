@@ -34,8 +34,6 @@ Getting Started
 
 You likely just want the files from this repository without any git history so that you can start from a fresh state. Here's one quick way to get these files into a directory:
 
-    git clone --depth 1 https://github.com/jncraton/project-template.git
-    mv project-template/* .
-    rm -rf project-template
+    curl https://rawgit.com/jncraton/project-template/master/new.sh | bash
 
-These commands and some additional cleanup are also available to be executed directly in the included `new.sh` script.
+You can also download, read, and execute the included `new.sh` script if you prefer not to pipe curl to bash.
