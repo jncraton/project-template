@@ -38,4 +38,4 @@ You likely just want the files from this repository without any git history so t
     mv project-template/* .
     rm -rf project-template
 
-These commands are also available to be executed directly in the included `new.sh` script.
+These commands and some additional cleanup are also available to be executed directly in the included `new.sh` script.
