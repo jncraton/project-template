@@ -11,6 +11,9 @@ mv project-template/.gitignore .
 # Get rid of the subdir
 rm -rf project-template
 
+# Remove extra files
+rm -f new.sh
+
 # Truncate the readme
 rm -f readme.md
 touch readme.md
