@@ -20,5 +20,5 @@ touch readme.md
 
 # Create a new repo here
 git init
-git add * .gitignore .travis.yml
+git add -f * .gitignore .travis.yml
 git commit -a -m "Initial commit"
