@@ -25,7 +25,7 @@ $(SRC).py: $(SRC).pmd
 	ptangle $(SRC).pmd
 
 $(SRC).pdf: $(SRC).md
-	pandoc --toc --variable documentclass=extarticle --variable fontsize=12pt --variable mainfont="FreeSans" --variable monofont="FreeMono"  --mathjax --pdf-engine=xelatex -s -o $@ $< 
+	pandoc --toc --variable documentclass=extarticle --variable fontsize=12pt --variable mainfont="FreeSans" --variable monofont="FreeMono"  --mathjax --latex-engine=xelatex -s -o $@ $< 
 
 show: $(SRC).html
 	firefox $(SRC).html
@@ -43,6 +43,9 @@ test: $(SRC).py
 	sed -i -e "s/from multiprocessing/from multiprocessing.dummy/g" $(SRC)-test.py
 	
 	python3 -m doctest $(SRC)-test.py
+
+readme.md: gen_readme.py
+	python3 gen_readme.py > readme.md
 
 clean:
 	rm -f $(SRC).txt $(SRC).odt $(SRC).docx $(SRC).pdf $(SRC).md $(SRC).py $(SRC)-test.py $(SRC).html slides.html
