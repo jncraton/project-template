@@ -1,1 +1,8 @@
-assignment.pdf
+__pycache__
+*.pdf
+*.html
+*.docx
+*.md
+index.py
+index.md
+index-test.py
