@@ -1,0 +1,7 @@
+[Settings]
+ID = "{{ netlify_site }}"
+
+[build]
+  base    = ""
+  publish = "."
+  command = "make"
