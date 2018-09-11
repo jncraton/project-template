@@ -1,5 +1,4 @@
 [Settings]
-ID = "{{ netlify_site }}"
 
 [build]
   base    = ""
