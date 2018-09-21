@@ -1,6 +1,6 @@
 SRC = index
 
-all: test $(SRC).html $(SRC)-self-contained.html slides.html
+all: test $(SRC).html slides.html
 
 .PHONY: show showpdf clean
 
@@ -17,9 +17,6 @@ $(SRC)-md2html.html: $(SRC).pmd
 
 $(SRC).html: $(SRC).md
 	pandoc --mathjax --standalone --css=style.css --toc -o $@ $<
-
-$(SRC)-self-contained.html: $(SRC).md
-	pandoc --self-contained --mathjax --standalone --css=style.css --toc -o $@ $<	
 
 $(SRC).md: $(SRC).pmd
 	pweave --format=pandoc $(SRC).pmd
@@ -51,6 +48,6 @@ readme.md: gen_readme.py
 	python3 gen_readme.py > readme.md
 
 clean:
-	rm -f $(SRC).txt $(SRC).odt $(SRC).docx $(SRC).pdf $(SRC).md $(SRC).py $(SRC)-test.py $(SRC).html $(SRC)-self-contained.html slides.html
+	rm -f $(SRC).txt $(SRC).odt $(SRC).docx $(SRC).pdf $(SRC).md $(SRC).py $(SRC)-test.py $(SRC).html slides.html
 	rm -rf figures
 	rm -rf __pycache__
