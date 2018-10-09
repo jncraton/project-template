@@ -2,7 +2,7 @@ SRC = index
 
 all: test $(SRC).html slides.html
 
-.PHONY: show showpdf clean
+.PHONY: show showpdf clean deploy
 
 slides.html: $(SRC).md makefile
 	pandoc --mathjax -t revealjs -s -o $@ $< -V revealjs-url=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0 -V theme=moon
@@ -47,7 +47,14 @@ test: $(SRC).py
 readme.md: gen_readme.py
 	python3 gen_readme.py > readme.md
 
+netlifyctl:
+	wget -qO- 'https://cli.netlify.com/download/latest/linux' | tar xz
+
+deploy: netlifyctl $(SRC).pdf $(SRC).html
+	./netlifyctl deploy
+
 clean:
 	rm -f $(SRC).txt $(SRC).odt $(SRC).docx $(SRC).pdf $(SRC).md $(SRC).py $(SRC)-test.py $(SRC).html slides.html
 	rm -rf figures
 	rm -rf __pycache__
+	rm -f netlifyctl
