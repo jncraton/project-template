@@ -3,4 +3,5 @@ matplotlib
 seaborn
 networkx
 scipy
+sklearn
 pygraphviz
