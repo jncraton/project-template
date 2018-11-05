@@ -19,7 +19,9 @@ $(SRC).html: $(SRC).md
 	pandoc --mathjax --standalone --css=style.css --toc -o $@ $<
 
 $(SRC).md: $(SRC).pmd
-	pweave --format=pandoc $(SRC).pmd
+	# Pandoc unfortunately doesn't support default args on command line
+	# We get around this by calling pweave from within Python
+	python3 -c "import pweave;pweave.rcParams['chunk']['defaultoptions']['wrap']=True;pweave.weave('$<',doctype='pandoc')"
 
 $(SRC).py: $(SRC).pmd
 	ptangle $(SRC).pmd
