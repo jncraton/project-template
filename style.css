@@ -63,7 +63,7 @@ p {
   margin: 1em 0;
 }
 
-img {
+img, video {
   max-width: 100%;
 }
 
@@ -243,8 +243,12 @@ table td {
   vertical-align: top;
 }
 
-.author, .date, .title {
+.author, .date, .title, .subtitle {
   text-align: center;
+}
+
+.subtitle {
+  font-size: 1.8em;
 }
 
 .author, .date {
