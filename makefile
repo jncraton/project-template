@@ -18,6 +18,9 @@ $(SRC)-md2html.html: $(SRC).pmd
 $(SRC).html: $(SRC).md
 	pandoc --mathjax --standalone --css=style.css --toc -o $@ $<
 
+$(SRC).tex: $(SRC).md
+	pandoc --mathjax --standalone --css=style.css --toc -o $@ $<
+
 $(SRC).md: $(SRC).pmd
 	# Pandoc unfortunately doesn't support default args on command line
 	# We get around this by calling pweave from within Python
@@ -27,7 +30,7 @@ $(SRC).py: $(SRC).pmd
 	ptangle $(SRC).pmd
 
 $(SRC).pdf: $(SRC).md
-	pandoc --toc --variable documentclass=extarticle --variable fontsize=12pt --variable mainfont="FreeSans" --variable mathfont="FreeMono" --variable monofont="FreeMono" --variable monofontoptions="SizeFeatures={Size=8}" --no-highlight --mathjax --latex-engine=xelatex -s -o $@ $< 
+	pandoc --toc --variable documentclass=extarticle --variable fontsize=12pt --variable mainfont="FreeSans" --variable mathfont="FreeMono" --variable monofont="FreeMono" --variable monofontoptions="SizeFeatures={Size=8}" --include-in-head head.tex --no-highlight --mathjax --latex-engine=xelatex -s -o $@ $< 
 
 show: $(SRC).html
 	firefox $(SRC).html
