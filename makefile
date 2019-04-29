@@ -1,11 +1,17 @@
 SRC = index
 
-all: test $(SRC).html slides.html
+all: test $(SRC).html slides.html revealjs
 
 .PHONY: show showpdf clean deploy
 
 slides.html: $(SRC).md makefile
-	pandoc --mathjax -t revealjs -s -o $@ $< -V revealjs-url=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.8.0 -V theme=moon
+	pandoc --mathjax -t revealjs -s -o $@ $< -V revealjs-url=revealjs -V theme=moon
+
+revealjs:
+	wget https://github.com/hakimel/reveal.js/archive/3.8.0.zip -O reveal.zip
+	unzip reveal.zip
+	mv reveal.js-3.8.0 revealjs
+	rm reveal.zip
 
 $(SRC).odt: $(SRC).md
 	pandoc --toc -o $@ $<
@@ -63,3 +69,4 @@ clean:
 	rm -rf figures
 	rm -rf __pycache__
 	rm -f netlifyctl
+	rm -rf revealjs
