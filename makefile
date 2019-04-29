@@ -5,7 +5,7 @@ all: test $(SRC).html slides.html
 .PHONY: show showpdf clean deploy
 
 slides.html: $(SRC).md makefile
-	pandoc --mathjax -t revealjs -s -o $@ $< -V revealjs-url=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0 -V theme=moon
+	pandoc --mathjax -t revealjs -s -o $@ $< -V revealjs-url=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.8.0 -V theme=moon
 
 $(SRC).odt: $(SRC).md
 	pandoc --toc -o $@ $<
