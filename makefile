@@ -13,9 +13,6 @@ revealjs:
 	mv reveal.js-3.8.0 revealjs
 	rm reveal.zip
 
-$(SRC).odt: $(SRC).md
-	pandoc --toc -o $@ $<
-
 $(SRC)-md2html.html: $(SRC).pmd
 	pweave --format=md2html $(SRC).pmd
 	# Hack to remove padding from first line of code blocks
@@ -38,12 +35,6 @@ $(SRC).py: $(SRC).pmd
 $(SRC).pdf: $(SRC).md
 	pandoc --toc --variable documentclass=extarticle --variable fontsize=12pt --variable mainfont="FreeSans" --variable mathfont="FreeMono" --variable monofont="FreeMono" --variable monofontoptions="SizeFeatures={Size=8}" --include-in-head head.tex --no-highlight --mathjax --latex-engine=xelatex -s -o $@ $< 
 
-show: $(SRC).html
-	firefox $(SRC).html
-
-showpdf: $(SRC).pdf
-	firefox $(SRC).pdf
-	
 run: $(SRC).py
 	python3 $(SRC).py
 
